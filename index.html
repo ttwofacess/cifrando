@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cifrado AES con CryptoJS</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+        }
+        textarea {
+            width: 80%;
+            height: 60px;
+            margin: 10px 0;
+        }
+        button {
+            margin: 5px;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Cifrado AES con CryptoJS</h2>
+    <textarea id="inputText" maxlength="60" placeholder="Introduce el texto aquí"></textarea>
+    <br>
+    <button onclick="cifrar()">Cifrar</button>
+    <button onclick="descifrar()">Descifrar</button>
+    <br>
+    <textarea id="outputText" readonly placeholder="Resultado"></textarea>
+
+    <script>
+        const claveSecreta = "mi_clave_secreta_123"; // ¡Cámbiala por una clave más segura!
+
+        function cifrar() {
+            let texto = document.getElementById("inputText").value;
+            if (!texto) {
+                alert("Ingresa un texto para cifrar");
+                return;
+            }
+            let cifrado = CryptoJS.AES.encrypt(texto, claveSecreta).toString();
+            document.getElementById("outputText").value = cifrado;
+        }
+
+        function descifrar() {
+            let textoCifrado = document.getElementById("inputText").value;
+            if (!textoCifrado) {
+                alert("Ingresa un texto cifrado para descifrar");
+                return;
+            }
+            try {
+                let bytes = CryptoJS.AES.decrypt(textoCifrado, claveSecreta);
+                let textoDescifrado = bytes.toString(CryptoJS.enc.Utf8);
+                
+                if (!textoDescifrado) {
+                    alert("Error: Clave incorrecta o texto mal formateado");
+                    return;
+                }
+                
+                document.getElementById("outputText").value = textoDescifrado;
+            } catch (error) {
+                alert("Error al descifrar. Verifica el texto cifrado.");
+            }
+        }
+    </script>
+
+</body>
+</html>
