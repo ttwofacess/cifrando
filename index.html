@@ -26,7 +26,7 @@
 <body>
 
     <h2>Cifrado AES con CryptoJS</h2>
-    <textarea id="inputText" maxlength="60" placeholder="Introduce el texto aquí"></textarea>
+    <textarea id="inputText" maxlength="200" placeholder="Introduce el texto aquí"></textarea>
     <br>
     <input type="password" id="secretKey" placeholder="Introduce la clave secreta" style="margin: 10px 0; padding: 5px;">
     <br>
@@ -58,8 +58,26 @@
                 return;
             }
 
-            let cifrado = CryptoJS.AES.encrypt(texto, claveSecreta).toString();
-            document.getElementById("outputText").value = cifrado;
+            /* let cifrado = CryptoJS.AES.encrypt(texto, claveSecreta).toString();
+            document.getElementById("outputText").value = cifrado; */
+
+            const salt = CryptoJS.lib.WordArray.random(128/8);
+            const iteraciones = 10000;
+            const claveDerivada = CryptoJS.PBKDF2(claveSecreta, salt, {
+                keySize: 256/32,
+                iterations: iteraciones
+            });
+            
+            const iv = CryptoJS.lib.WordArray.random(128/8);
+            const cifrado = CryptoJS.AES.encrypt(texto, claveDerivada, { 
+                iv: iv,
+                mode: CryptoJS.mode.CBC,
+                padding: CryptoJS.pad.Pkcs7
+            });
+            
+            // Combinar salt, iv y texto cifrado para almacenamiento/transmisión
+            const resultado = salt.toString() + iv.toString() + cifrado.toString();
+            document.getElementById("outputText").value = resultado;
         }
 
         function descifrar() {
@@ -77,7 +95,7 @@
             }
 
             try {
-                let bytes = CryptoJS.AES.decrypt(textoCifrado, claveSecreta);
+                /* let bytes = CryptoJS.AES.decrypt(textoCifrado, claveSecreta);
                 let textoDescifrado = bytes.toString(CryptoJS.enc.Utf8);
                 
                 if (!textoDescifrado) {
@@ -88,7 +106,48 @@
                 document.getElementById("outputText").value = textoDescifrado;
             } catch (error) {
                 alert("Error al descifrar. Verifica el texto cifrado y la clave.");
-            }
+            } */
+                    // Verificar longitud mínima del texto cifrado (salt + iv = 64 caracteres hex)
+                if (textoCifrado.length < 64) {
+                    alert("El texto cifrado no tiene el formato correcto");
+                    return;
+                }
+
+                // Extraer componentes (salt: 32 chars hex, iv: 32 chars hex, resto: texto cifrado)
+                const salt = CryptoJS.enc.Hex.parse(textoCifrado.substr(0, 32));
+                const iv = CryptoJS.enc.Hex.parse(textoCifrado.substr(32, 32));
+                const textoCifradoReal = textoCifrado.substring(64);
+
+                // Derivar clave usando PBKDF2
+                const iteraciones = 10000;
+                const claveDerivada = CryptoJS.PBKDF2(claveSecreta, salt, {
+                    keySize: 256/32,
+                    iterations: iteraciones
+                });
+
+                // Descifrar usando AES-CBC
+                const bytes = CryptoJS.AES.decrypt(textoCifradoReal, claveDerivada, {
+                    iv: iv,
+                    mode: CryptoJS.mode.CBC,
+                    padding: CryptoJS.pad.Pkcs7
+                });
+
+                // Convertir a texto plano
+                const textoDescifrado = bytes.toString(CryptoJS.enc.Utf8);
+
+                // Verificar si el descifrado fue exitoso
+                if (!textoDescifrado) {
+                    alert("Error: Clave incorrecta o texto cifrado mal formado");
+                    return;
+                }
+
+                // Mostrar resultado
+                document.getElementById("outputText").value = textoDescifrado;
+                
+            } catch (error) {
+                console.error("Error al descifrar:", error);
+                alert("Error al descifrar. Verifica el texto cifrado y la clave.");
+            } 
         }
     </script>
 
