@@ -28,18 +28,24 @@
     <h2>Cifrado AES con CryptoJS</h2>
     <textarea id="inputText" maxlength="60" placeholder="Introduce el texto aquí"></textarea>
     <br>
+    <input type="password" id="secretKey" placeholder="Introduce la clave secreta" style="margin: 10px 0; padding: 5px;">
+    <br>
     <button onclick="cifrar()">Cifrar</button>
     <button onclick="descifrar()">Descifrar</button>
     <br>
     <textarea id="outputText" readonly placeholder="Resultado"></textarea>
 
     <script>
-        const claveSecreta = "mi_clave_secreta_123"; // ¡Cámbiala por una clave más segura!
+        // const claveSecreta = "mi_clave_secreta_123"; // ¡Cámbiala por una clave más segura!
 
         function cifrar() {
             let texto = document.getElementById("inputText").value;
-            if (!texto) {
-                alert("Ingresa un texto para cifrar");
+            let claveSecreta = document.getElementById("secretKey").value;
+
+            /* if (!texto) {
+                alert("Ingresa un texto para cifrar"); */
+            if (!texto || !claveSecreta) {
+                alert("Ingresa tanto el texto como la clave secreta");
                 return;
             }
             let cifrado = CryptoJS.AES.encrypt(texto, claveSecreta).toString();
@@ -48,8 +54,12 @@
 
         function descifrar() {
             let textoCifrado = document.getElementById("inputText").value;
-            if (!textoCifrado) {
-                alert("Ingresa un texto cifrado para descifrar");
+            let claveSecreta = document.getElementById("secretKey").value;
+
+            /* if (!textoCifrado) {
+                alert("Ingresa un texto cifrado para descifrar"); */
+            if (!textoCifrado || !claveSecreta) {
+                alert("Ingresa tanto el texto cifrado como la clave secreta");    
                 return;
             }
             try {
@@ -63,7 +73,7 @@
                 
                 document.getElementById("outputText").value = textoDescifrado;
             } catch (error) {
-                alert("Error al descifrar. Verifica el texto cifrado.");
+                alert("Error al descifrar. Verifica el texto cifrado y la clave.");
             }
         }
     </script>
