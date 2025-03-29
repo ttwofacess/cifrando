@@ -77,6 +77,9 @@
             document.getElementById("outputText").value = resultado;
         }
 
+        let intentosFallidos = 0;
+        const MAX_INTENTOS = 5;
+
         function descifrar() {
             const inicio = Date.now();
             let textoCifrado = document.getElementById("inputText").value;
@@ -120,12 +123,19 @@
 
                 // Convertir a texto plano
                 const textoDescifrado = bytes.toString(CryptoJS.enc.Utf8);
-
-                // Verificar si el descifrado fue exitoso
+                
+                // --- INICIO del bloque de control de intentos fallidos ---
                 if (!textoDescifrado) {
-                    alert("Error: Clave incorrecta o texto cifrado mal formado");
+                    intentosFallidos++;
+                    if (intentosFallidos >= MAX_INTENTOS) {
+                        alert("Demasiados intentos fallidos. Por favor, recarga la página.");
+                        return;
+                    }
+                    alert(`Clave incorrecta. Intentos restantes: ${MAX_INTENTOS - intentosFallidos}`);
                     return;
                 }
+                intentosFallidos = 0; // Resetear contador si es exitoso
+                // --- FIN del bloque ---
 
                 // Mostrar resultado
                 document.getElementById("outputText").value = textoDescifrado;
