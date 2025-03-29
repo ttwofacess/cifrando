@@ -58,9 +58,6 @@
                 return;
             }
 
-            /* let cifrado = CryptoJS.AES.encrypt(texto, claveSecreta).toString();
-            document.getElementById("outputText").value = cifrado; */
-
             const salt = CryptoJS.lib.WordArray.random(128/8);
             const iteraciones = 10000;
             const claveDerivada = CryptoJS.PBKDF2(claveSecreta, salt, {
@@ -81,6 +78,7 @@
         }
 
         function descifrar() {
+            const inicio = Date.now();
             let textoCifrado = document.getElementById("inputText").value;
             let claveSecreta = document.getElementById("secretKey").value;
 
@@ -95,18 +93,6 @@
             }
 
             try {
-                /* let bytes = CryptoJS.AES.decrypt(textoCifrado, claveSecreta);
-                let textoDescifrado = bytes.toString(CryptoJS.enc.Utf8);
-                
-                if (!textoDescifrado) {
-                    alert("Error: Clave incorrecta o texto mal formateado");
-                    return;
-                }
-                
-                document.getElementById("outputText").value = textoDescifrado;
-            } catch (error) {
-                alert("Error al descifrar. Verifica el texto cifrado y la clave.");
-            } */
                     // Verificar longitud mínima del texto cifrado (salt + iv = 64 caracteres hex)
                 if (textoCifrado.length < 64) {
                     alert("El texto cifrado no tiene el formato correcto");
@@ -148,6 +134,14 @@
                 console.error("Error al descifrar:", error);
                 alert("Error al descifrar. Verifica el texto cifrado y la clave.");
             } 
+
+            const tiempoTranscurrido = Date.now() - inicio;
+            const retardoMinimo = 500; // 500ms
+            if (tiempoTranscurrido < retardoMinimo) {
+                setTimeout(() => {
+                    // Continuar con el proceso o mostrar error
+                }, retardoMinimo - tiempoTranscurrido);
+            }
         }
     </script>
 
