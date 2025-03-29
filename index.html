@@ -21,6 +21,23 @@
             padding: 10px 20px;
             cursor: pointer;
         }
+        #passwordStrength {
+            transition: all 0.3s ease;
+            border-radius: 3px;
+            height: 5px;
+            background-color: #eee;
+            width: 80%;
+            margin: 0 auto 10px;
+        }
+        .strength-0 { background-color: #ff4d4d; width: 20%; } /* Muy débil */
+        .strength-1 { background-color: #ff8c66; width: 40%; } /* Débil */
+        .strength-2 { background-color: #ffcc00; width: 60%; } /* Moderada */
+        .strength-3 { background-color: #66cc66; width: 80%; } /* Fuerte */
+        .strength-4 { background-color: #00b300; width: 100%; } /* Muy fuerte */
+        #strengthText {
+            font-size: 12px;
+            color: #666;
+        }
     </style>
 </head>
 <body>
@@ -29,6 +46,8 @@
     <textarea id="inputText" maxlength="200" placeholder="Introduce el texto aquí"></textarea>
     <br>
     <input type="password" id="secretKey" placeholder="Introduce la clave secreta" style="margin: 10px 0; padding: 5px;">
+    <div id="passwordStrength"></div>
+    <div id="strengthText">Seguridad: Muy débil</div>
     <br>
     <button onclick="cifrar()">Cifrar</button>
     <button onclick="descifrar()">Descifrar</button>
@@ -41,6 +60,40 @@
             const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{12,}$/;
             return regex.test(clave);
         }
+
+        // Event listener para mostrar fortaleza de la clave
+        document.getElementById("secretKey").addEventListener("input", function() {
+            const password = this.value;
+            const strengthBar = document.getElementById("passwordStrength");
+            const strengthText = document.getElementById("strengthText");
+            
+            // Reset classes
+            strengthBar.className = "";
+            
+            // Calcular puntaje de fortaleza
+            let score = 0;
+            
+            // Longitud mínima
+            if (password.length >= 12) score++;
+            // Contiene mayúsculas
+            if (/[A-Z]/.test(password)) score++;
+            // Contiene minúsculas
+            if (/[a-z]/.test(password)) score++;
+            // Contiene números
+            if (/\d/.test(password)) score++;
+            // Contiene símbolos
+            if (/[^a-zA-Z0-9]/.test(password)) score++;
+            
+            // Ajustar score máximo a 4 (para nuestras 5 clases CSS)
+            score = Math.min(4, score);
+            
+            // Aplicar clase y texto según score
+            strengthBar.classList.add(`strength-${score}`);
+            
+            const strengthLabels = ["Muy débil", "Débil", "Moderada", "Fuerte", "Muy fuerte"];
+            strengthText.textContent = `Seguridad: ${strengthLabels[score]}`;
+            strengthText.style.color = ["#ff4d4d", "#ff8c66", "#ffcc00", "#66cc66", "#00b300"][score];
+        });
 
         function cifrar() {
             let texto = document.getElementById("inputText").value;
@@ -123,7 +176,7 @@
 
                 // Convertir a texto plano
                 const textoDescifrado = bytes.toString(CryptoJS.enc.Utf8);
-                
+
                 // --- INICIO del bloque de control de intentos fallidos ---
                 if (!textoDescifrado) {
                     intentosFallidos++;
