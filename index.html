@@ -36,18 +36,28 @@
     <textarea id="outputText" readonly placeholder="Resultado"></textarea>
 
     <script>
-        // const claveSecreta = "mi_clave_secreta_123"; // ¡Cámbiala por una clave más segura!
+        function validarClave(clave) {
+        // Mínimo 12 caracteres, al menos: 1 mayúscula, 1 minúscula, 1 número y 1 símbolo
+            const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{12,}$/;
+            return regex.test(clave);
+        }
 
         function cifrar() {
             let texto = document.getElementById("inputText").value;
             let claveSecreta = document.getElementById("secretKey").value;
 
-            /* if (!texto) {
-                alert("Ingresa un texto para cifrar"); */
+            
             if (!texto || !claveSecreta) {
                 alert("Ingresa tanto el texto como la clave secreta");
                 return;
             }
+
+            // Validar fortaleza de la clave
+            if (!validarClave(claveSecreta)) {
+                alert("La clave debe tener al menos 12 caracteres e incluir mayúsculas, minúsculas, números y símbolos");
+                return;
+            }
+
             let cifrado = CryptoJS.AES.encrypt(texto, claveSecreta).toString();
             document.getElementById("outputText").value = cifrado;
         }
@@ -56,12 +66,16 @@
             let textoCifrado = document.getElementById("inputText").value;
             let claveSecreta = document.getElementById("secretKey").value;
 
-            /* if (!textoCifrado) {
-                alert("Ingresa un texto cifrado para descifrar"); */
             if (!textoCifrado || !claveSecreta) {
                 alert("Ingresa tanto el texto cifrado como la clave secreta");    
                 return;
             }
+
+            if (!validarClave(claveSecreta)) {
+                alert("La clave debe tener al menos 12 caracteres e incluir mayúsculas, minúsculas, números y símbolos");
+                return;
+            }
+
             try {
                 let bytes = CryptoJS.AES.decrypt(textoCifrado, claveSecreta);
                 let textoDescifrado = bytes.toString(CryptoJS.enc.Utf8);
