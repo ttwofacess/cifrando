@@ -8,19 +8,19 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
-    <h2>Cifrado AES con CryptoJS</h2>
-    <textarea id="inputText" maxlength="200" placeholder="Introduce el texto aquí"></textarea>
-    <br>
-    <input type="password" id="secretKey" placeholder="Introduce la clave secreta" style="margin: 10px 0; padding: 5px;">
-    <div id="passwordStrength"></div>
-    <div id="strengthText">Seguridad: Muy débil</div>
-    <br>
-    <button onclick="cifrar()">Cifrar</button>
-    <button onclick="descifrar()">Descifrar</button>
-    <br>
-    <textarea id="outputText" readonly placeholder="Resultado"></textarea>
-
+    <div class="container"> <!-- Add this opening tag -->
+        <h2>Cifrado AES con CryptoJS</h2>
+        <textarea id="inputText" maxlength="200" placeholder="Introduce el texto aquí"></textarea>
+        <br>
+        <input type="password" id="secretKey" placeholder="Introduce la clave secreta" style="margin: 10px 0; padding: 5px;">
+        <div id="passwordStrength"></div>
+        <div id="strengthText">Seguridad: Muy débil</div>
+        <br>
+        <button onclick="cifrar()">Cifrar</button>
+        <button onclick="descifrar()">Descifrar</button>
+        <br>
+        <textarea id="outputText" readonly placeholder="Resultado"></textarea>
+    </div> <!-- Add this closing tag -->
     <script src="script.js"></script>
 </body>
 </html>

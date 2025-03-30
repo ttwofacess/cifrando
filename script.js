@@ -35,7 +35,9 @@ function validarClave(clave) {
         
         const strengthLabels = ["Muy débil", "Débil", "Moderada", "Fuerte", "Muy fuerte"];
         strengthText.textContent = `Seguridad: ${strengthLabels[score]}`;
-        strengthText.style.color = ["#ff4d4d", "#ff8c66", "#ffcc00", "#66cc66", "#00b300"][score];
+        // strengthText.style.color = ["#ff4d4d", "#ff8c66", "#ffcc00", "#66cc66", "#00b300"][score];
+        const strengthColors = ["#e57373", "#ffb74d", "#fff176", "#81c784", "#4db6ac"];
+        strengthText.style.color = strengthColors[score]; // Use the updated array
     });
 
     function cifrar() {
